@@ -20,6 +20,13 @@ public class PolynomeEntry : MonoBehaviour
         inputField.contentType = TMP_InputField.ContentType.Custom;
     }
 
+    public void GetResult()
+    {
+        //Debug.Log(Polynome_Adder.Add(polynomes));
+        
+        
+    }
+
     public void FieldToList()
     {
         char[] _input = inputField.text.Replace(" ", "").ToCharArray();
@@ -68,6 +75,8 @@ public class PolynomeEntry : MonoBehaviour
                 }
             }
         }
+        
+        polynomes.Add(polynomeList);
     }
 
     private void CheckMonome(int _i, char[] _input)

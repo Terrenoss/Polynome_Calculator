@@ -39,6 +39,12 @@ public class PolynomeEntry : MonoBehaviour
         FieldToList();
         Debug.Log(GetComponent<Polynome_Multiplier>().Multiply(polynomes));
         polynomes = new();
+    }    
+    public void GetDivide()
+    {
+        FieldToList();
+        Debug.Log(GetComponent<Polynome_Divider>().Divide(polynomes));
+        polynomes = new();
     }
 
     public void FieldToList()

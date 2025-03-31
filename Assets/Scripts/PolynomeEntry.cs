@@ -26,11 +26,19 @@ public class PolynomeEntry : MonoBehaviour
     {
         FieldToList();
         Debug.Log(polynomeAdder.Add(polynomes));
+        polynomes = new();
     }    
     public void GetSub()
     {
         FieldToList();
         Debug.Log(GetComponent<Polynome_Sub>().Sub(polynomes));
+        polynomes = new();
+    }    
+    public void GetMultiply()
+    {
+        FieldToList();
+        Debug.Log(GetComponent<Polynome_Multiplier>().Multiply(polynomes));
+        polynomes = new();
     }
 
     public void FieldToList()

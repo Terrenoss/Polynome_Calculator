@@ -22,10 +22,15 @@ public class PolynomeEntry : MonoBehaviour
         polynomeAdder = GetComponent<Polynome_Add>();
     }
 
-    public void GetResult()
+    public void GetAdd()
     {
         FieldToList();
         Debug.Log(polynomeAdder.Add(polynomes));
+    }    
+    public void GetSub()
+    {
+        FieldToList();
+        Debug.Log(GetComponent<Polynome_Sub>().Sub(polynomes));
     }
 
     public void FieldToList()

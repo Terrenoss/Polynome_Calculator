@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,10 @@ public class PolynomeEntry : MonoBehaviour
     public LinkedList polynomeList;
     public List<LinkedList> polynomes = new();
 
+    public event EventHandler OnPolynomesReset;
+    public event EventHandler<string> OnPolynomeEntered;
+    public event EventHandler<string> OnPolynomeResult;
+
     void OnEnable()
     {
         inputField.contentType = TMP_InputField.ContentType.Custom;
@@ -25,30 +30,42 @@ public class PolynomeEntry : MonoBehaviour
     public void GetAdd()
     {
         FieldToList();
-        Debug.Log(polynomeAdder.Add(polynomes));
-        polynomes = new();
+        OnPolynomeResult?.Invoke(this, polynomeAdder.Add(polynomes));
+        Reset();
     }    
     public void GetSub()
     {
         FieldToList();
-        Debug.Log(GetComponent<Polynome_Sub>().Sub(polynomes));
-        polynomes = new();
+        OnPolynomeResult?.Invoke(this, GetComponent<Polynome_Sub>().Sub(polynomes));
+        Reset();
     }    
     public void GetMultiply()
     {
         FieldToList();
-        Debug.Log(GetComponent<Polynome_Multiplier>().Multiply(polynomes));
-        polynomes = new();
+        OnPolynomeResult?.Invoke(this, GetComponent<Polynome_Multiplier>().Multiply(polynomes));
+        Reset();
     }    
     public void GetDivide()
     {
         FieldToList();
-        Debug.Log(GetComponent<Polynome_Divider>().Divide(polynomes));
+        OnPolynomeResult?.Invoke(this, GetComponent<Polynome_Divider>().Divide(polynomes));
+        Reset();
+    }
+
+    public void Reset()
+    {
         polynomes = new();
+        OnPolynomesReset?.Invoke(this, EventArgs.Empty);
     }
 
     public void FieldToList()
     {
+        if (inputField.text.Trim() == "")
+        {
+            return;
+        }
+        
+        OnPolynomeEntered?.Invoke(this, inputField.text);
         char[] _input = inputField.text.Replace(" ", "").ToCharArray();
 
         //--------------Checks----------------
@@ -165,17 +182,20 @@ public class PolynomeEntry : MonoBehaviour
         string _monomeUnit = "";
         string _monomePower = "";
 
-        //Getting the unity and power of the monome
-        if (_monomeTab[1].Contains("^"))
+        if (_monomeTab.Count() > 1)
         {
-            string[] _monomeUnity = _monomeTab[1].Trim().Split('^');
-            _monomeUnit = _monomeUnity[0];
-            _monomePower = _monomeUnity[1];
-        }
-        else
-        {
-            _monomeUnit = _monomeTab[1];
-            _monomePower = "1";
+            //Getting the unity and power of the monome
+            if (_monomeTab[1].Contains("^"))
+            {
+                string[] _monomeUnity = _monomeTab[1].Trim().Split('^');
+                _monomeUnit = _monomeUnity[0];
+                _monomePower = _monomeUnity[1];
+            }
+            else
+            {
+                _monomeUnit = _monomeTab[1];
+                _monomePower = "1";
+            }
         }
 
         Node _monomeNode = new Node(_monomeValue, _monomePower, _monomeUnit);

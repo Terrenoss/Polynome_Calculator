@@ -8,257 +8,159 @@ public class Polynome_Divider : MonoBehaviour
     {
         if (polynomes == null || polynomes.Count < 2)
         {
-            Debug.Log("Il faut au moins deux polynômes pour effectuer une division.");
+            Debug.Log("At least two polynomials needed for division");
             return "0";
         }
 
-        // Dividende (premier polynôme) et diviseur (second polynôme)
         LinkedList dividend = polynomes[0];
         LinkedList divisor = polynomes[1];
 
-        // Vérification division par zéro
         if (IsZeroPolynomial(divisor))
         {
-            Debug.LogError("Division par zéro impossible (diviseur nul).");
+            Debug.LogError("Cannot divide by zero polynomial");
             return "0";
         }
 
-        // Initialisation du résultat
-        StringBuilder result = new StringBuilder();
-        LinkedList quotient = new LinkedList();
-        LinkedList remainder = CopyPolynomial(dividend);
+        // Convert to term lists
+        List<Term> dividendTerms = PolynomialToTermList(dividend);
+        List<Term> divisorTerms = PolynomialToTermList(divisor);
 
-        // Degré du diviseur
-        int divisorDegree = GetDegree(divisor);
+        // Factor out common x^n terms
+        int dividendMinPower = GetMinPower(dividendTerms);
+        int divisorMinPower = GetMinPower(divisorTerms);
+        int commonPower = Mathf.Min(dividendMinPower, divisorMinPower);
 
-        while (!IsZeroPolynomial(remainder) && GetDegree(remainder) >= divisorDegree)
-        {
-            // Termes dominants
-            Node leadingRemainder = GetLeadingTerm(remainder);
-            Node leadingDivisor = GetLeadingTerm(divisor);
+        // Factor out x^commonPower from both polynomials
+        List<Term> simplifiedDividend = FactorOutPower(dividendTerms, commonPower);
+        List<Term> simplifiedDivisor = FactorOutPower(divisorTerms, commonPower);
 
-            // Calcul du terme du quotient
-            float coeff = leadingRemainder.value / leadingDivisor.value;
-            int power = int.Parse(leadingRemainder.power) - int.Parse(leadingDivisor.power);
+        // Convert back to string representation
+        string numerator = TermListToString(simplifiedDividend);
+        string denominator = TermListToString(simplifiedDivisor);
 
-            // Ajout au quotient (sans utiliser AddNode)
-            Node newTerm = new Node(coeff, power.ToString(), leadingDivisor.unity);
-            AddNodeDirectly(quotient, newTerm);
-
-            // Construction du monôme temporaire
-            LinkedList temp = new LinkedList();
-            AddNodeDirectly(temp, new Node(coeff, power.ToString(), leadingDivisor.unity));
-
-            // Multiplication et soustraction
-            LinkedList product = MultiplyPolynomials(temp, divisor);
-            remainder = SubtractPolynomials(remainder, product);
-        }
-
-        // Construction du résultat sous forme de string
-        result.Append(FormatPolynomial(quotient));
-
-        // Si le reste n'est pas nul, l'ajouter au résultat
-        if (!IsZeroPolynomial(remainder))
-        {
-            result.Append(" + (Reste: ");
-            result.Append(FormatPolynomial(remainder));
-            result.Append(")");
-        }
-
-        return result.Length == 0 ? "0" : result.ToString();
+        // Handle special cases
+        if (denominator == "1")
+            return numerator;
+        
+        return $"({numerator})/({denominator})";
     }
 
-    // Helper methods
-    private void AddNodeDirectly(LinkedList list, Node newNode)
+    private int GetMinPower(List<Term> terms)
     {
-        if (list.firstNode == null)
+        int minPower = int.MaxValue;
+        foreach (Term term in terms)
         {
-            list.firstNode = newNode;
+            if (term.power < minPower && Mathf.Abs(term.coefficient) > 0.0001f)
+                minPower = term.power;
         }
-        else
+        return minPower == int.MaxValue ? 0 : minPower;
+    }
+
+    private List<Term> FactorOutPower(List<Term> terms, int power)
+    {
+        List<Term> result = new List<Term>();
+        foreach (Term term in terms)
         {
-            Node current = list.firstNode;
-            while (current.next != null)
+            result.Add(new Term(
+                term.coefficient,
+                term.power - power,
+                term.variable
+            ));
+        }
+        return result;
+    }
+
+    private class Term
+    {
+        public float coefficient;
+        public int power;
+        public string variable;
+
+        public Term(float coeff, int pow, string var)
+        {
+            coefficient = coeff;
+            power = pow;
+            variable = var;
+        }
+    }
+
+    private List<Term> PolynomialToTermList(LinkedList poly)
+    {
+        List<Term> terms = new List<Term>();
+        Node current = poly.firstNode;
+        while (current != null)
+        {
+            terms.Add(new Term(
+                current.value,
+                int.Parse(current.power),
+                current.unity
+            ));
+            current = current.next;
+        }
+        return terms;
+    }
+
+    private string TermListToString(List<Term> terms)
+    {
+        if (terms.Count == 0) return "0";
+
+        // Sort by descending power
+        terms.Sort((a, b) => b.power.CompareTo(a.power));
+
+        StringBuilder sb = new StringBuilder();
+        bool firstTerm = true;
+        string variable = terms.Count > 0 ? terms[0].variable : "x";
+
+        foreach (Term term in terms)
+        {
+            if (Mathf.Abs(term.coefficient) < 0.0001f) continue;
+
+            if (!firstTerm)
             {
-                current = current.next;
+                sb.Append(term.coefficient > 0 ? " + " : " - ");
             }
-            current.next = newNode;
+            else if (term.coefficient < 0)
+            {
+                sb.Append("-");
+            }
+
+            float absCoeff = Mathf.Abs(term.coefficient);
+            if (absCoeff != 1f || term.power == 0)
+            {
+                sb.Append(absCoeff.ToString("0.###"));
+            }
+
+            if (term.power > 0)
+            {
+                sb.Append(variable);
+                if (term.power > 1)
+                {
+                    sb.Append("^");
+                    sb.Append(term.power);
+                }
+            }
+            else if (term.power < 0)
+            {
+                sb.Append(variable);
+                sb.Append("^");
+                sb.Append(term.power);
+            }
+
+            firstTerm = false;
         }
+
+        return sb.Length == 0 ? "1" : sb.ToString();
     }
 
     private bool IsZeroPolynomial(LinkedList poly)
     {
-        if (poly == null || poly.firstNode == null) return true;
-        
         Node current = poly.firstNode;
         while (current != null)
         {
-            if (current.value != 0f) return false;
+            if (Mathf.Abs(current.value) > 0.0001f)
+                return false;
             current = current.next;
         }
         return true;
-    }
-
-    private int GetDegree(LinkedList poly)
-    {
-        if (IsZeroPolynomial(poly)) return -1;
-        
-        int maxDegree = 0;
-        Node current = poly.firstNode;
-        while (current != null)
-        {
-            int power = int.Parse(current.power);
-            if (power > maxDegree) maxDegree = power;
-            current = current.next;
-        }
-        return maxDegree;
-    }
-
-    private Node GetLeadingTerm(LinkedList poly)
-    {
-        Node leadingTerm = null;
-        int maxDegree = -1;
-        
-        Node current = poly.firstNode;
-        while (current != null)
-        {
-            int power = int.Parse(current.power);
-            if (power > maxDegree)
-            {
-                maxDegree = power;
-                leadingTerm = current;
-            }
-            current = current.next;
-        }
-        
-        return leadingTerm;
-    }
-
-    private LinkedList CopyPolynomial(LinkedList original)
-    {
-        LinkedList copy = new LinkedList();
-        Node current = original.firstNode;
-        while (current != null)
-        {
-            AddNodeDirectly(copy, new Node(current.value, current.power, current.unity));
-            current = current.next;
-        }
-        return copy;
-    }
-
-    private LinkedList MultiplyPolynomials(LinkedList a, LinkedList b)
-    {
-        LinkedList result = new LinkedList();
-        
-        Node nodeA = a.firstNode;
-        while (nodeA != null)
-        {
-            Node nodeB = b.firstNode;
-            while (nodeB != null)
-            {
-                float coeff = nodeA.value * nodeB.value;
-                int power = int.Parse(nodeA.power) + int.Parse(nodeB.power);
-                string unity = nodeA.unity;
-                
-                // Chercher si un terme avec cette puissance existe déjà
-                Node existingNode = result.firstNode;
-                bool found = false;
-                while (existingNode != null)
-                {
-                    if (existingNode.unity == unity && existingNode.power == power.ToString())
-                    {
-                        existingNode.value += coeff;
-                        found = true;
-                        break;
-                    }
-                    existingNode = existingNode.next;
-                }
-                
-                if (!found)
-                {
-                    AddNodeDirectly(result, new Node(coeff, power.ToString(), unity));
-                }
-                
-                nodeB = nodeB.next;
-            }
-            nodeA = nodeA.next;
-        }
-        
-        return result;
-    }
-
-    private LinkedList SubtractPolynomials(LinkedList a, LinkedList b)
-    {
-        LinkedList result = CopyPolynomial(a);
-        
-        Node nodeB = b.firstNode;
-        while (nodeB != null)
-        {
-            bool termFound = false;
-            Node nodeA = result.firstNode;
-            
-            while (nodeA != null)
-            {
-                if (nodeA.unity == nodeB.unity && nodeA.power == nodeB.power)
-                {
-                    nodeA.value -= nodeB.value;
-                    termFound = true;
-                    break;
-                }
-                nodeA = nodeA.next;
-            }
-            
-            if (!termFound)
-            {
-                AddNodeDirectly(result, new Node(-nodeB.value, nodeB.power, nodeB.unity));
-            }
-            
-            nodeB = nodeB.next;
-        }
-        
-        return result;
-    }
-
-    private string FormatPolynomial(LinkedList poly)
-    {
-        if (poly == null || poly.firstNode == null) return "0";
-        
-        StringBuilder sb = new StringBuilder();
-        Node current = poly.firstNode;
-        bool firstTerm = true;
-        
-        while (current != null)
-        {
-            if (current.value != 0)
-            {
-                if (!firstTerm)
-                {
-                    sb.Append(current.value > 0 ? "+" : "");
-                }
-                
-                // Coefficient
-                if (current.value != 1f && current.value != -1f)
-                {
-                    sb.Append(current.value.ToString());
-                }
-                else if (current.value == -1f)
-                {
-                    sb.Append("-");
-                }
-                
-                // Unité et puissance
-                sb.Append(current.unity);
-                if (current.power != "1")
-                {
-                    sb.Append("^");
-                    sb.Append(current.power);
-                }
-                
-                firstTerm = false;
-            }
-            current = current.next;
-        }
-        
-        return sb.Length == 0 ? "0" : sb.ToString();
     }
 }

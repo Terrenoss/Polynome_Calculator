@@ -11,7 +11,7 @@ public class Polynome_Add : MonoBehaviour
         if (_polynomes == null || _polynomes.Count == 0) return "";
 
         StringBuilder result = new StringBuilder();
-
+        
         while (_polynomes.Count > 0)
         {
             string _tempunity = "";
@@ -31,6 +31,7 @@ public class Polynome_Add : MonoBehaviour
                 }
 
                 Node _nodetemp = _polynome.firstNode;
+                Debug.Log(_nodetemp.value);
 
                 // Initialisation des premières unités et puissances
                 if (!_is)
@@ -40,6 +41,8 @@ public class Polynome_Add : MonoBehaviour
 
                     _is = true;
                 }
+                
+                Node _node = _nodetemp;
 
                 // Parcourt et addition des monômes similaires
                 while (_nodetemp != null)
@@ -47,8 +50,12 @@ public class Polynome_Add : MonoBehaviour
                     if (_nodetemp.unity == _tempunity && _nodetemp.power == _temppower)
                     {
                         _values.Add(_nodetemp.value);
-                        _polynome.firstNode = _nodetemp.next;
+                        if(_nodetemp == _polynome.firstNode)
+                            _polynome.firstNode = _nodetemp.next;
+                        else
+                            _node.next = _nodetemp.next;
                     }
+                    _node = _nodetemp;
                     _nodetemp = _nodetemp.next; // On avance le nœud !
                 }
             }
@@ -57,21 +64,25 @@ public class Polynome_Add : MonoBehaviour
             float _result = 0;
             foreach (float _value in _values)
             {
+                Debug.Log(_value);
                 _result += _value;
             }
 
             // Gestion du format du résultat
             if (result.Length > 0 && _result != 0)
             {
-                result.Append(_result > 0 ? "+ " : "- ");
+                result.Append(_result > 0 ? "+ " : "");
             }
             else if (_result == 0)
             {
                 _is = false; // reset pour passer au monôme suivant
                 continue;
             }
-
-            result.Append($"{_result}{_tempunity}^{_temppower} ");
+            
+            if(_tempunity != "")
+                result.Append($"{_result}{_tempunity}^{_temppower} ");
+            else
+                result.Append($"{_result}{_tempunity}{_temppower} ");
 
             _is = false;
         }

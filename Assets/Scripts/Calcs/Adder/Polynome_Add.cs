@@ -75,7 +75,7 @@ public class Polynome_Add : MonoBehaviour
 
             _is = false;
         }
-
+        Debug.Log(result.ToString().Trim());
         return result.ToString().Trim();
     }
 }

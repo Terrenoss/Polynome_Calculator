@@ -1679,7 +1679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2408475297186587191, guid: d8e05d2470b51764b940a1007f4162db, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -455
       objectReference: {fileID: 0}
     - target: {fileID: 2408475297186587191, guid: d8e05d2470b51764b940a1007f4162db, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1939,7 +1939,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 275, y: -140}
-  m_SizeDelta: {x: 500, y: 200}
+  m_SizeDelta: {x: 525, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &186521986
 MonoBehaviour:
@@ -3544,7 +3544,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1608288470}
         m_TargetAssemblyTypeName: PolynomeEntry, Assembly-CSharp
-        m_MethodName: GetSub
+        m_MethodName: GetDivide
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8583,7 +8583,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 275, y: -140}
-  m_SizeDelta: {x: 500, y: 200}
+  m_SizeDelta: {x: 525, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &960700329
 MonoBehaviour:
@@ -13551,7 +13551,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1608288467}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 622ad9f5e809d874aa7b6a5b7a1031f4, type: 3}
+  m_Script: {fileID: 11500000, guid: 731301ea9e1c47045be9abc5b119b6de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1617127958
@@ -17281,11 +17281,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1859670907}
         m_TargetAssemblyTypeName: UiAnimations, Assembly-CSharp
-        m_MethodName: MakeError
+        m_MethodName: FadeIn
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 1556723703}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 1608288469}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.CanvasGroup, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

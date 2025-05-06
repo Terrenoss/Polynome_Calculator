@@ -27,28 +27,33 @@ public class PolynomeEntry : MonoBehaviour
         polynomeAdder = GetComponent<Polynome_Add>();
     }
 
+    public void Result(string _result)
+    {
+        OnPolynomeResult?.Invoke(this, _result);
+    }
+
     public void GetAdd()
     {
         FieldToList();
-        OnPolynomeResult?.Invoke(this, polynomeAdder.Add(polynomes));
+        Result(polynomeAdder.Add(polynomes));
         Reset();
     }    
     public void GetSub()
     {
         FieldToList();
-        OnPolynomeResult?.Invoke(this, GetComponent<Polynome_Sub>().Sub(polynomes));
+        Result(GetComponent<Polynome_Sub>().Sub(polynomes));
         Reset();
     }    
     public void GetMultiply()
     {
         FieldToList();
-        OnPolynomeResult?.Invoke(this, GetComponent<Polynome_Multiplier>().Multiply(polynomes));
+        Result(GetComponent<Polynome_Multiplier>().Multiply(polynomes));
         Reset();
     }    
     public void GetDivide()
     {
         FieldToList();
-        OnPolynomeResult?.Invoke(this, GetComponent<Polynome_Divider>().Divide(polynomes));
+        Result(GetComponent<Polynome_Divider>().Divide(polynomes));
         Reset();
     }
 

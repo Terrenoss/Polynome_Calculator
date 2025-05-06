@@ -48,7 +48,6 @@ public class UiAnimations : MonoBehaviour
 
     public void MakeError(GameObject _gameObject)
     {
-        StopAllCoroutines();
         StartCoroutine(Error(_gameObject));
     }
 

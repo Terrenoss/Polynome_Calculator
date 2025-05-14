@@ -1679,7 +1679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2408475297186587191, guid: d8e05d2470b51764b940a1007f4162db, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -455
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2408475297186587191, guid: d8e05d2470b51764b940a1007f4162db, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3018,7 +3018,7 @@ GameObject:
   - component: {fileID: 291610852}
   - component: {fileID: 291610855}
   - component: {fileID: 291610853}
-  - component: {fileID: 291610854}
+  - component: {fileID: 291610857}
   - component: {fileID: 291610856}
   m_Layer: 5
   m_Name: PolynomesMultiplier
@@ -3064,18 +3064,6 @@ MonoBehaviour:
   inputField: {fileID: 854554795}
   monome: 
   monomes: []
---- !u!114 &291610854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 291610851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 622ad9f5e809d874aa7b6a5b7a1031f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!225 &291610855
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3106,6 +3094,18 @@ MonoBehaviour:
   resultText: {fileID: 1837619329}
   baseColor: {r: 0.20784315, g: 0.7137255, b: 0.20784315, a: 1}
   outlineColor: {r: 0.16470589, g: 0.54509807, b: 0.42352945, a: 1}
+--- !u!114 &291610857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291610851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fa166abd6a4314e804aa5ba2c4c609, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &323724776
 GameObject:
   m_ObjectHideFlags: 0
@@ -15587,7 +15587,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 291610853}
         m_TargetAssemblyTypeName: PolynomeEntry, Assembly-CSharp
-        m_MethodName: GetSub
+        m_MethodName: GetMultiply
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

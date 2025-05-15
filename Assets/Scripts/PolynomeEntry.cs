@@ -55,6 +55,12 @@ public class PolynomeEntry : MonoBehaviour
         FieldToList();
         Result(GetComponent<Polynome_Divider>().Divide(polynomes));
         Reset();
+    }    
+    public void GetDeriver()
+    {
+        FieldToList();
+        Result(GetComponent<Polynome_deriver>().Derive(polynomes));
+        Reset();
     }
 
     public void Reset()

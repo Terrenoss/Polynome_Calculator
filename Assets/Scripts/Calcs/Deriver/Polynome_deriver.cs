@@ -13,28 +13,29 @@ public class Polynome_deriver : MonoBehaviour
         foreach (LinkedList polynome in _polynomes)
         {
             Node currentNode = polynome.firstNode;
-            
+
             while (currentNode != null)
             {
-                // Parse power (exposant)
-                if (!float.TryParse(currentNode.power, out float power))
+                // Vérification de la puissance
+                if (string.IsNullOrWhiteSpace(currentNode.power) || 
+                    !float.TryParse(currentNode.power.Trim(), out float power))
                 {
-                    Debug.LogError($"Invalid power format: {currentNode.power}");
+                    Debug.LogError($"Puissance invalide : '{currentNode.power}'");
+                    currentNode = currentNode.next;
                     continue;
                 }
 
-                // Skip constants (terms with power 0)
+                // Skip constants
                 if (power == 0)
                 {
                     currentNode = currentNode.next;
                     continue;
                 }
 
-                // Calculate new coefficient and power
                 float newCoefficient = currentNode.value * power;
                 float newPower = power - 1;
 
-                // Format the derived term
+                // Ajouter un + si nécessaire
                 if (result.Length > 0 && newCoefficient > 0)
                 {
                     result.Append(" + ");
@@ -42,21 +43,24 @@ public class Polynome_deriver : MonoBehaviour
                 else if (newCoefficient < 0)
                 {
                     result.Append(" - ");
-                    newCoefficient = -newCoefficient; // We'll handle the sign in the format
+                    newCoefficient = -newCoefficient; // gestion du signe
                 }
 
-                // Handle different cases for display
+                // Sécuriser l'unité (par ex. "x")
+                string unity = string.IsNullOrWhiteSpace(currentNode.unity) ? "x" : currentNode.unity;
+
+                // Affichage selon le degré
                 if (newPower == 0)
                 {
                     result.Append($"{newCoefficient}");
                 }
                 else if (newPower == 1)
                 {
-                    result.Append($"{newCoefficient}{currentNode.unity}");
+                    result.Append($"{newCoefficient}{unity}");
                 }
                 else
                 {
-                    result.Append($"{newCoefficient}{currentNode.unity}^{newPower}");
+                    result.Append($"{newCoefficient}{unity}^{newPower}");
                 }
 
                 currentNode = currentNode.next;
@@ -65,4 +69,5 @@ public class Polynome_deriver : MonoBehaviour
 
         return result.ToString().Trim();
     }
+
 }
